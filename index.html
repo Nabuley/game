@@ -89,6 +89,8 @@
     </div>
     <canvas id="gameCanvas"></canvas>
     <script>
+        const Invincibility = 30;
+        let invincibility = 0;
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
         canvas.width = window.innerWidth;
@@ -112,6 +114,9 @@
 
             draw() {
                 ctx.fillStyle = "white";
+                if (invincibility > 0 && invincibility % 2 === 1) {
+                    ctx.fillStyle = "black";
+                }
                 ctx.fillRect(this.x, this.y, this.width, this.height);
             }
         }
@@ -230,6 +235,7 @@
             }
         }
 
+        
         let bullet_num = 1;
         const player = new Player();
         const bullets = [];
@@ -253,7 +259,8 @@
         }
 
         function checkCollisions() {
-            temp_boss_hp = boss.health;
+            invincibility -= 1;
+            //temp_boss_hp = boss.health;
             bullets.forEach((bullet, bulletIndex) => {
                 if (
                     bullet.x < boss.x + boss.width &&
@@ -271,10 +278,12 @@
                     bullet.x < player.x + player.width &&
                     bullet.x + bullet.width > player.x &&
                     bullet.y < player.y + player.height &&
-                    bullet.y + bullet.height > player.y
+                    bullet.y + bullet.height > player.y &&
+                    invincibility <= 0
                 ) {
                     bossBullets.splice(bulletIndex, 1);
                     player.health -= 10;
+                    invincibility = Invincibility;
                 }
             });
         }
